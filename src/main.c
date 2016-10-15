@@ -85,23 +85,25 @@ void adc_init(void)
  ADC_SoftwareStartConv(ADC1);
 }
 
+void ledInit(){
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+	      //RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
+	GPIO_InitTypeDef gpioInitStruc;
+	gpioInitStruc.GPIO_Mode = GPIO_Mode_OUT;
+	gpioInitStruc.GPIO_OType = GPIO_OType_PP;
+	gpioInitStruc.GPIO_Pin = GPIO_Pin_5;
+	gpioInitStruc.GPIO_Speed = GPIO_Speed_400KHz;
 
+	GPIO_Init(GPIOA, &gpioInitStruc);
+}
 
 int main(void)
 {
   int i = 0;
   adc_init();
+  ledInit();
 
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
-      //RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
-      GPIO_InitTypeDef gpioInitStruc;
-      gpioInitStruc.GPIO_Mode = GPIO_Mode_OUT;
-      gpioInitStruc.GPIO_OType = GPIO_OType_PP;
-      gpioInitStruc.GPIO_Pin = GPIO_Pin_5;
-      gpioInitStruc.GPIO_Speed = GPIO_Speed_400KHz;
-
-      GPIO_Init(GPIOA, &gpioInitStruc);
-    //  GPIO_SetBits(GPIOA, GPIO_Pin_5);
+  //  GPIO_SetBits(GPIOA, GPIO_Pin_5);
 
   /**
   *  IMPORTANT NOTE!
@@ -122,15 +124,12 @@ int main(void)
 
   /* TODO - Add your application code here */
 
-
   /* Infinite loop */
   while (1)
   {
-	//i++;
 	ADC_SoftwareStartConv(ADC1);
 	while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)){}
 	double AD_value=ADC_GetConversionValue(ADC1);
-	printf("%f",AD_value);
 
 	for (i=0; i<AD_value * 20; i++){
 	  	 if (i < (AD_value * 10)){
